@@ -1,0 +1,23 @@
+# https://stackoverflow.com/a/64373702
+name: CI
+
+on:
+  push
+
+jobs:
+  test:
+    name: Run test suite
+    runs-on: ubuntu-latest
+    env:
+      DOCKERFILE: ./Dockerfile.dev
+      IMAGE_TAG: julianmateu/docker-react
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Build docker images
+      run: docker build -t ${IMAGE_TAG} -f ${DOCKERFILE} .
+
+    - name: Run tests
+      run: docker run ${IMAGE_TAG} yarn test --env=jsdom --ci --watchAll=false --coverage
